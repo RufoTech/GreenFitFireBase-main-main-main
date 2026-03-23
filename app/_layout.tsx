@@ -162,7 +162,6 @@ export default function RootLayout() {
         <Stack.Screen name="screens/LogWaterScreen" />
         <Stack.Screen name="screens/AddMealScreen" />
         <Stack.Screen name="screens/AddCustomMealScreen" />
-        <Stack.Screen name="screens/LogWeightScreen" />
         <Stack.Screen name="screens/BodyFatCalculatorScreen" />
         <Stack.Screen name="screens/MeasurementGuideScreen" />
         <Stack.Screen name="screens/MealDetailsScreen" />

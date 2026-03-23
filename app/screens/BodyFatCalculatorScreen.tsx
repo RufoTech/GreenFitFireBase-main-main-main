@@ -15,13 +15,53 @@ const BodyFatCalculatorScreen = () => {
   const [neck, setNeck] = useState("");
   const [waist, setWaist] = useState("");
   const [hip, setHip] = useState("");
+  const [result, setResult] = useState<string | null>(null);
 
   const handleCalculate = () => {
-    // Basic calculation logic could be added here
-    // For now, we'll just navigate back to LogWeightScreen
-    // In a real app, you would pass the calculated result back
-    router.back();
+    const h = parseFloat(height);
+    const n = parseFloat(neck);
+    const w = parseFloat(waist);
+    const hi = parseFloat(hip);
+
+    if (!h || !n || !w || (gender === "Female" && !hi)) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
+    let bf = 0;
+    if (gender === "Male") {
+      bf = 495 / (1.0324 - 0.19077 * Math.log10(w - n) + 0.15456 * Math.log10(h)) - 450;
+    } else {
+      bf = 495 / (1.29579 - 0.35004 * Math.log10(w + hi - n) + 0.22100 * Math.log10(h)) - 450;
+    }
+
+    if (!isNaN(bf) && bf > 0 && bf < 100) {
+      setResult(bf.toFixed(1));
+    } else {
+      alert("Invalid measurements. Please try again.");
+      setResult(null);
+    }
   };
+
+  const getCategory = (bf: number, gen: string) => {
+    if (gen === "Male") {
+      if (bf < 6) return "ESSENTIAL FAT";
+      if (bf <= 13) return "ATHLETE";
+      if (bf <= 17) return "FITNESS";
+      if (bf <= 24) return "AVERAGE";
+      return "OBESE";
+    } else {
+      if (bf < 14) return "ESSENTIAL FAT";
+      if (bf <= 20) return "ATHLETE";
+      if (bf <= 24) return "FITNESS";
+      if (bf <= 31) return "AVERAGE";
+      return "OBESE";
+    }
+  };
+
+  const bfNum = result ? parseFloat(result) : 0;
+  const category = getCategory(bfNum, gender);
+  const pct = Math.min(Math.max((bfNum / 40) * 100, 0), 100);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -151,13 +191,13 @@ const BodyFatCalculatorScreen = () => {
             <View>
               <Text style={styles.resultsLabel}>ESTIMATED BODY FAT</Text>
               <View style={styles.resultsValueContainer}>
-                <Text style={styles.resultsValue}>18.4</Text>
+                <Text style={styles.resultsValue}>{result || "0.0"}</Text>
                 <Text style={styles.resultsUnit}>%</Text>
               </View>
             </View>
             <View style={{ alignItems: 'flex-end' }}>
               <View style={styles.categoryBadge}>
-                <Text style={styles.categoryText}>FITNESS</Text>
+                <Text style={styles.categoryText}>{result ? category : "--"}</Text>
               </View>
               <Text style={styles.categoryLabel}>Category</Text>
             </View>
@@ -166,7 +206,7 @@ const BodyFatCalculatorScreen = () => {
           {/* Gauge Bar */}
           <View style={styles.gaugeContainer}>
             <View style={styles.gaugeBackground} />
-            <View style={[styles.gaugeFill, { width: '45%' }]} />
+            <View style={[styles.gaugeFill, { width: `${pct}%` }]} />
           </View>
           
           <View style={styles.gaugeLabels}>
@@ -176,12 +216,6 @@ const BodyFatCalculatorScreen = () => {
             <Text style={styles.gaugeLabel}>OBESE</Text>
           </View>
         </View>
-
-        {/* Save Button */}
-        <TouchableOpacity style={styles.saveButton} activeOpacity={0.9}>
-          <MaterialIcons name="save" size={20} color={PRIMARY} />
-          <Text style={styles.saveButtonText}>Save to Profile</Text>
-        </TouchableOpacity>
 
       </ScrollView>
     </SafeAreaView>
@@ -443,22 +477,6 @@ const styles = StyleSheet.create({
     color: TEXT_MUTED,
     textTransform: 'uppercase',
     letterSpacing: -0.5,
-  },
-  saveButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    backgroundColor: '#1e293b', // slate-800
-    borderWidth: 1,
-    borderColor: '#334155', // slate-700
-    paddingVertical: 16,
-    borderRadius: 12,
-  },
-  saveButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: TEXT_WHITE,
   },
 });
 

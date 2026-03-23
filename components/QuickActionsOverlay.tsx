@@ -160,11 +160,11 @@ export default function QuickActionsOverlay({ visible, onClose }: QuickActionsOv
               onPress={() => handleActionPress('/screens/AddMealScreen')}
           />
           <QuickActionButton 
-              title="Log Weight" 
+              title="Body Fat" 
               subtitle="" 
-              IconComponent={MaterialIcons} 
-              iconName="monitor-weight" 
-              onPress={() => handleActionPress('/screens/LogWeightScreen')}
+              IconComponent={MaterialCommunityIcons} 
+              iconName="percent" 
+              onPress={() => handleActionPress('/screens/BodyFatCalculatorScreen')}
           />
           <QuickActionButton 
               title="Saved Programs" 
