@@ -6,6 +6,7 @@ import Svg, { Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { getWaterLogs, createWaterLog, removeWaterLog, getDailyGoal, setDailyGoal, WaterLog, saveWaterLogs } from '../utils/waterManager';
 import { scheduleHydrationReminders } from '../utils/notificationManager';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { CustomAlert } from '@/utils/CustomAlert';
 
 const PRIMARY = "#ccff00";
 const BG_DARK = "#12140a"; 
@@ -170,7 +171,7 @@ export default function LogWaterScreen() {
       // Save everything to storage
       await saveWaterLogs(selectedDate, history, consumed);
       await setDailyGoal(goal);
-      Alert.alert("Success", "Water log saved successfully!");
+      CustomAlert.show("Success", "Water log saved successfully!");
       router.back();
   };
 
@@ -185,9 +186,9 @@ export default function LogWaterScreen() {
       
       if (success) {
           setReminderVisible(false);
-          Alert.alert("Success", `Hydration reminder set every ${interval} minutes!`);
+          CustomAlert.show("Success", `Hydration reminder set every ${interval} minutes!`);
       } else {
-          Alert.alert("Permission Required", "Please enable notifications to set reminders.");
+          CustomAlert.show("Permission Required", "Please enable notifications to set reminders.");
       }
   };
 

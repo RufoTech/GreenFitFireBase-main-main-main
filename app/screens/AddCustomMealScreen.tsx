@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, StyleSheet,
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
+import { CustomAlert } from '@/utils/CustomAlert';
 
 const PRIMARY = "#CCFF00";
 const BG_DARK = "#0F0F0F";
@@ -35,7 +36,7 @@ const AddCustomMealScreen = () => {
     // Request permission
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permission needed', 'Sorry, we need camera roll permissions to make this work!');
+      CustomAlert.show('Permission needed', 'Sorry, we need camera roll permissions to make this work!');
       return;
     }
 

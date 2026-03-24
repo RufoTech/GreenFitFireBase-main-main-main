@@ -20,6 +20,7 @@ import {
     View
 } from 'react-native';
 import { SelectionStore } from '../utils/SelectionStore';
+import { CustomAlert } from '@/utils/CustomAlert';
 
 const API_URL = Platform.OS === 'android' ? 'http://10.0.2.2:8080' : 'http://localhost:8080';
 
@@ -168,7 +169,7 @@ export default function WorkoutDetailsScreen() {
               rawData.id = workoutDoc.id;
               
               // DEBUG: Let user see what fields are caught by rawData
-              // Alert.alert("Debug Payload", JSON.stringify({ name: rawData.name, title: rawData.title, duration: rawData.duration }));
+              // CustomAlert.show("Debug Payload", JSON.stringify({ name: rawData.name, title: rawData.title, duration: rawData.duration }));
             }
         }
 
@@ -274,7 +275,7 @@ export default function WorkoutDetailsScreen() {
 
     const user = auth().currentUser;
     if (!user) {
-        alert("Please log in to save workouts.");
+        CustomAlert.show("Please log in to save workouts.");
         return;
     }
     const userId = user.uid;
@@ -284,7 +285,7 @@ export default function WorkoutDetailsScreen() {
         await firestore().collection('saved_workouts').doc(savedDocId).delete();
         setIsSaved(false);
         setSavedDocId(null);
-        alert('Workout removed from library!');
+        CustomAlert.show('Workout removed from library!');
       } else {
         const savedWorkout = {
             userId: userId,
@@ -301,11 +302,11 @@ export default function WorkoutDetailsScreen() {
         const docRef = await firestore().collection('saved_workouts').add(savedWorkout);
         setIsSaved(true);
         setSavedDocId(docRef.id);
-        alert('Workout saved to library!');
+        CustomAlert.show('Workout saved to library!');
       }
     } catch (error) {
       console.error("Error toggling library status:", error);
-      alert('Operation failed.');
+      CustomAlert.show('Operation failed.');
     }
   };
 
@@ -321,7 +322,7 @@ export default function WorkoutDetailsScreen() {
 
   const handleCommunityShare = () => {
     if (!workout) return;
-    Alert.alert(
+    CustomAlert.show(
       "Share with Community",
       "Do you want to share this workout to the community marketplace?",
       [
@@ -364,10 +365,10 @@ export default function WorkoutDetailsScreen() {
               }
 
               setIsShared(true);
-              Alert.alert("Success", "Your workout has been shared with the community!");
+              CustomAlert.show("Success", "Your workout has been shared with the community!");
             } catch (error: any) {
               console.error("Error sharing workout:", error);
-              Alert.alert("DİQQƏT!", error.message || "Failed to share workout.");
+              CustomAlert.show("DİQQƏT!", error.message || "Failed to share workout.");
             }
           }
         }

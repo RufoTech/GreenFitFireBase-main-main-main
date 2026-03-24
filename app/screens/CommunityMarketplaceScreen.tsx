@@ -19,6 +19,7 @@ import { useRouter, useFocusEffect } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import { CustomAlert } from '@/utils/CustomAlert';
 
 const API_URL = Platform.OS === 'android' ? 'http://10.0.2.2:8080' : 'http://localhost:8080';
 
@@ -100,7 +101,7 @@ export default function CommunityMarketplaceScreen() {
       setItems(fetchedItems);
     } catch (error) {
       console.error("Error fetching community items:", error);
-      Alert.alert("Error", "Could not load community items.");
+      CustomAlert.show("Error", "Could not load community items.");
     } finally {
       setLoading(false);
     }
@@ -109,7 +110,7 @@ export default function CommunityMarketplaceScreen() {
   const handleDownload = async (item: any) => {
     if (!currentUser) return;
     if (item.authorId === currentUser.uid) {
-      Alert.alert("Notice", "You already own this item.");
+      CustomAlert.show("Notice", "You already own this item.");
       return;
     }
 
@@ -131,19 +132,19 @@ export default function CommunityMarketplaceScreen() {
         throw new Error('Failed to download item');
       }
 
-      Alert.alert("Success", `${activeTab === 'programs' ? 'Program' : 'Workout'} downloaded to your library!`);
+      CustomAlert.show("Success", `${activeTab === 'programs' ? 'Program' : 'Workout'} downloaded to your library!`);
       // Update local state to show incremented downloads and mark as downloaded locally
       setItems(prev => prev.map(i => i.id === item.id ? { ...i, downloads: (i.downloads || 0) + 1, isDownloaded: true } : i));
     } catch (error) {
       console.error("Error downloading item:", error);
-      Alert.alert("Error", "Could not download the item.");
+      CustomAlert.show("Error", "Could not download the item.");
     } finally {
       setDownloadingId(null);
     }
   };
 
   const handleDelete = (item: any) => {
-    Alert.alert(
+    CustomAlert.show(
       "Confirm Delete",
       "Are you sure you want to delete this from the community?",
       [
@@ -172,10 +173,10 @@ export default function CommunityMarketplaceScreen() {
                 }
 
                 setItems(prev => prev.filter(i => i.id !== item.id));
-                Alert.alert("Success", "Item deleted from community.");
+                CustomAlert.show("Success", "Item deleted from community.");
              } catch (error) {
                 console.error("Error deleting item:", error);
-                Alert.alert("Error", "Could not delete the item.");
+                CustomAlert.show("Error", "Could not delete the item.");
              } finally {
                 setDeletingId(null);
              }

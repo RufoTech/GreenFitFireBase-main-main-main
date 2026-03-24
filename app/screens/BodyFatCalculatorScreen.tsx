@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, SafeAreaView, Platform, StatusBar } from 'react-native';
 import { MaterialIcons, FontAwesome6 } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { CustomAlert } from '@/utils/CustomAlert';
 
 const PRIMARY = "#ccff00";
 const BG_DARK = "#1f230f";
@@ -24,7 +25,7 @@ const BodyFatCalculatorScreen = () => {
     const hi = parseFloat(hip);
 
     if (!h || !n || !w || (gender === "Female" && !hi)) {
-      alert("Please fill in all required fields.");
+      CustomAlert.show("Please fill in all required fields.");
       return;
     }
 
@@ -38,7 +39,7 @@ const BodyFatCalculatorScreen = () => {
     if (!isNaN(bf) && bf > 0 && bf < 100) {
       setResult(bf.toFixed(1));
     } else {
-      alert("Invalid measurements. Please try again.");
+      CustomAlert.show("Invalid measurements. Please try again.");
       setResult(null);
     }
   };

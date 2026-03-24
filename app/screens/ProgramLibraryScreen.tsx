@@ -3,6 +3,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
+import { CustomAlert } from '@/utils/CustomAlert';
 import {
   ActivityIndicator,
   Alert,
@@ -129,7 +130,7 @@ export default function ProgramLibraryScreen() {
   }, []);
 
   const handleDelete = (workout: SavedWorkout) => {
-    Alert.alert(
+    CustomAlert.show(
       "Delete Workout",
       "Are you sure you want to delete this workout?",
       [
@@ -143,7 +144,7 @@ export default function ProgramLibraryScreen() {
               // No need to manually update state as onSnapshot handles it
             } catch (error) {
               console.error("Error deleting workout:", error);
-              Alert.alert("Error", "Failed to delete workout.");
+              CustomAlert.show("Error", "Failed to delete workout.");
             }
           }
         }

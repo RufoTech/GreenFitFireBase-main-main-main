@@ -4,6 +4,7 @@ import firestore from '@react-native-firebase/firestore';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
+import { CustomAlert } from '@/utils/CustomAlert';
 import {
     ActivityIndicator,
     Alert,
@@ -262,7 +263,7 @@ export default function MonthlyWorkoutLibraryScreen() {
   };
 
   const handleDeleteProgram = (programId: string) => {
-      Alert.alert(
+      CustomAlert.show(
           "Delete Program",
           "Are you sure you want to delete this program?",
           [
@@ -295,7 +296,7 @@ export default function MonthlyWorkoutLibraryScreen() {
                           setUserPrograms(prev => prev.filter(p => p.id !== programId));
                       } catch (error) {
                           console.error("Error deleting program:", error);
-                          Alert.alert("Error", "Failed to delete program.");
+                          CustomAlert.show("Error", "Failed to delete program.");
                       }
                   }
               }
@@ -305,10 +306,10 @@ export default function MonthlyWorkoutLibraryScreen() {
 
   const handleShareProgram = (program: any) => {
     if (sharedProgramIds.has(program.id)) {
-      Alert.alert('Artıq paylaşılıb', 'Bu proqram artıq icmaya paylaşılıb.');
+      CustomAlert.show('Artıq paylaşılıb', 'Bu proqram artıq icmaya paylaşılıb.');
       return;
     }
-    Alert.alert(
+    CustomAlert.show(
       "Share Program",
       "Do you want to share this program with the community?",
       [
@@ -351,10 +352,10 @@ export default function MonthlyWorkoutLibraryScreen() {
 
               // Mark as shared locally
               setSharedProgramIds(prev => new Set(prev).add(program.id));
-              Alert.alert("Success", "Your program has been shared with the community!");
+              CustomAlert.show("Success", "Your program has been shared with the community!");
             } catch (error: any) {
               console.error("Error sharing program:", error);
-              Alert.alert("DİQQƏT!", error.message || "Failed to share program. Please try again.");
+              CustomAlert.show("DİQQƏT!", error.message || "Failed to share program. Please try again.");
             }
           }
         }

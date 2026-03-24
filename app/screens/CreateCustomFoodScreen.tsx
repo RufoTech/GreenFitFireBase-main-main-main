@@ -3,6 +3,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
+import { CustomAlert } from '@/utils/CustomAlert';
 import {
   ActivityIndicator,
   Alert,
@@ -50,13 +51,13 @@ export default function CreateCustomFoodScreen() {
 
   const handleSave = async () => {
     if (!name.trim()) {
-      Alert.alert("Error", "Please enter a food name.");
+      CustomAlert.show("Error", "Please enter a food name.");
       return;
     }
 
     const user = auth().currentUser;
     if (!user) {
-      Alert.alert("Error", "You must be logged in to create food.");
+      CustomAlert.show("Error", "You must be logged in to create food.");
       return;
     }
 
@@ -86,7 +87,7 @@ export default function CreateCustomFoodScreen() {
 
       await firestore().collection('customUserFoods').add(payload);
       
-      Alert.alert("Success", "Custom food saved successfully!", [
+      CustomAlert.show("Success", "Custom food saved successfully!", [
         {
           text: "OK",
           onPress: () => router.back()
@@ -95,7 +96,7 @@ export default function CreateCustomFoodScreen() {
 
     } catch (error) {
       console.error("Error saving food:", error);
-      Alert.alert("Error", "Failed to save the custom food.");
+      CustomAlert.show("Error", "Failed to save the custom food.");
     } finally {
       setLoading(false);
     }

@@ -2,6 +2,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
+import { CustomAlert } from '@/utils/CustomAlert';
 import {
   ActivityIndicator,
   Dimensions,
@@ -167,7 +168,7 @@ export default function WorkoutStartScreen() {
             style={styles.startNowButton}
             onPress={() => {
                 if (!workout.id) {
-                    alert("Error: Workout ID is missing. Cannot start workout.");
+                    CustomAlert.show("Error: Workout ID is missing. Cannot start workout.");
                     return;
                 }
                 router.replace({

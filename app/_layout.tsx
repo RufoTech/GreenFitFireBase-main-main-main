@@ -14,6 +14,7 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import AchievementToast from './components/AchievementToast';
+import CustomAlertModal from '@/components/CustomAlertModal';
 
 // Splash screen'in otomatik kapanmasını engelle (Fontlar yüklenene kadar)
 SplashScreen.preventAutoHideAsync();
@@ -168,6 +169,7 @@ export default function RootLayout() {
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
       </Stack>
       <AchievementToast />
+      <CustomAlertModal />
       <StatusBar style="auto" />
     </ThemeProvider>
   );

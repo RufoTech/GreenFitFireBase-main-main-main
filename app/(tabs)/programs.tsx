@@ -18,6 +18,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import { CustomAlert } from '@/utils/CustomAlert';
 
 const { width } = Dimensions.get('window');
 
@@ -99,7 +100,7 @@ export default function ProgramsScreen() {
   const handleRemoveProgram = async () => {
     if (!user) return;
     
-    Alert.alert(
+    CustomAlert.show(
       "Remove Program",
       "Are you sure you want to remove your active program? Your progress within the program will not be deleted, but it will be removed from your dashboard.",
       [
@@ -114,7 +115,7 @@ export default function ProgramsScreen() {
               });
             } catch (error) {
               console.error("Error removing program:", error);
-              Alert.alert("Error", "Could not remove the program. Please try again.");
+              CustomAlert.show("Error", "Could not remove the program. Please try again.");
             }
           }
         }

@@ -3,6 +3,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
+import { CustomAlert } from '@/utils/CustomAlert';
 import {
     Alert,
     FlatList,
@@ -216,7 +217,7 @@ export default function ChatScreen() {
       if (sharedItem.type === 'program') {
         const progDoc = await firestore().collection('user_programs').doc(sharedItem.id).get();
         if (!progDoc.exists) {
-          Alert.alert("Error", "This program no longer exists.");
+          CustomAlert.show("Error", "This program no longer exists.");
           return;
         }
 
@@ -235,11 +236,11 @@ export default function ChatScreen() {
           });
         }
 
-        Alert.alert("Success", "Program saved to your library!");
+        CustomAlert.show("Success", "Program saved to your library!");
       } else {
         const workoutDoc = await firestore().collection('customUserWorkouts').doc(sharedItem.id).get();
         if (!workoutDoc.exists) {
-          Alert.alert("Error", "This workout no longer exists.");
+          CustomAlert.show("Error", "This workout no longer exists.");
           return;
         }
 
@@ -249,7 +250,7 @@ export default function ChatScreen() {
           createdAt: firestore.FieldValue.serverTimestamp()
         });
 
-        Alert.alert("Success", "Workout saved to your library!");
+        CustomAlert.show("Success", "Workout saved to your library!");
       }
 
       // Update the specific message in Firestore to mark it as saved by this user
@@ -264,7 +265,7 @@ export default function ChatScreen() {
 
     } catch (error) {
       console.error("Error saving shared item:", error);
-      Alert.alert("Error", "Could not save the item.");
+      CustomAlert.show("Error", "Could not save the item.");
     }
   };
 

@@ -62,6 +62,7 @@ const FemaleIcon = ({ color }: { color: string }) => (
 );
 
 import Slider from '@react-native-community/slider';
+import { CustomAlert } from '@/utils/CustomAlert';
 
 export default function PersonalDataScreen() {
   const router = useRouter();
@@ -137,7 +138,7 @@ export default function PersonalDataScreen() {
 
   const handleNext = async () => {
     if (!user) {
-        // Alert.alert("Error", "No user logged in");
+        // CustomAlert.show("Error", "No user logged in");
         // For now proceed for testing if needed or return
         return;
     }
@@ -164,7 +165,7 @@ export default function PersonalDataScreen() {
         }
     } catch (error) {
         console.error(error);
-        // Alert.alert("Error", "Failed to save data. Please try again.");
+        // CustomAlert.show("Error", "Failed to save data. Please try again.");
     } finally {
         setLoading(false);
     }

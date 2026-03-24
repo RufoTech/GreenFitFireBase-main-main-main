@@ -4,6 +4,7 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import * as Clipboard from 'expo-clipboard';
 import { useRouter } from 'expo-router';
 import React from 'react';
+import { CustomAlert } from '@/utils/CustomAlert';
 import {
   Alert,
   Image,
@@ -65,14 +66,14 @@ export default function ProfileScreen() {
       router.replace('/login');
     } catch (error) {
       console.error(error);
-      Alert.alert('Error', 'Failed to log out');
+      CustomAlert.show('Error', 'Failed to log out');
     }
   };
 
   const copyToClipboard = async () => {
     if (user?.uid) {
       await Clipboard.setStringAsync(user.uid);
-      Alert.alert("Copied!", "User ID copied to clipboard.");
+      CustomAlert.show("Copied!", "User ID copied to clipboard.");
     }
   };
 

@@ -2,9 +2,11 @@ import GoogleIcon from '@/components/GoogleIcon';
 import { colors } from '@/constants/theme';
 import { MaterialIcons } from '@expo/vector-icons';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
+import { CustomAlert } from '@/utils/CustomAlert';
 import {
   Alert,
   Dimensions,
@@ -91,7 +93,7 @@ export default function RegisterScreen() {
       router.replace('/screens/GoalSelectionScreen');
     } catch (error) {
       console.error(error);
-      Alert.alert('Google Sign-In Error', String(error));
+      CustomAlert.show('Giriş Uğursuz', 'Google ilə daxil olarkən xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.');
     }
   }
 
@@ -117,7 +119,7 @@ export default function RegisterScreen() {
     if (!isValid) return;
 
     if (password !== confirmPassword) {
-      Alert.alert('Hata', 'Şifreler eşleşmiyor.');
+      CustomAlert.show('Diqqət', 'Daxil etdiyiniz şifrələr uyğun gəlmir.');
       return;
     }
     setLoading(true);
@@ -140,16 +142,16 @@ export default function RegisterScreen() {
       // Send email verification
       await user.sendEmailVerification();
       
-      Alert.alert(
-        'Kayıt Başarılı', 
-        'Hesabınız oluşturuldu. Lütfen e-postanızı kontrol ederek hesabınızı doğrulayın.',
+      CustomAlert.show(
+        'Qeydiyyat Uğurlu!', 
+        'Hesabınız yaradıldı. Zəhmət olmasa e-poçtunuzu yoxlayaraq hesabınızı təsdiqləyin.',
         [
           { text: 'Tamam', onPress: () => router.replace('/screens/LoginScreen') }
         ]
       );
     } catch (error: any) {
       console.error(error);
-      Alert.alert('Kayıt Hatası', error.message || 'Kayıt olunamadı.');
+      CustomAlert.show('Xəta Başı Verdi', 'Bu e-poçt ünvanı ilə artıq qeydiyyatdan keçilib və ya fərqli bir xəta var. Zəhmət olmasa bir daha yoxlayın.');
     } finally {
       setLoading(false);
     }

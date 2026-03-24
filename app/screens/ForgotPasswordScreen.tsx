@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import auth from '@react-native-firebase/auth';
 import React, { useState } from 'react';
 import { openInbox } from 'react-native-email-link';
+import { CustomAlert } from '@/utils/CustomAlert';
 import {
   Alert,
   Image,
@@ -42,16 +43,16 @@ export default function ForgotPasswordScreen() {
         }
       } catch {
       }
-      Alert.alert(
-        'Open Email App',
-        'Could not open your email app automatically. Please open your email app manually and check your inbox.'
+      CustomAlert.show(
+        'E-poçt Tətbiqi Açılmadı',
+        'Cihazınızda e-poçt tətbiqi tapılmadı. Lütfən poçt qutunuzu özünüz açaraq gələn mailləri yoxlayın.'
       );
     }
   };
 
   const handleSendResetLink = async () => {
     if (!email) {
-      Alert.alert('Error', 'Please enter your email address');
+      CustomAlert.show('Xəta', 'Zəhmət olmasa e-poçt ünvanınızı daxil edin.');
       return;
     }
     setLoading(true);
@@ -60,14 +61,14 @@ export default function ForgotPasswordScreen() {
       setSuccessModalVisible(true);
     } catch (error: any) {
       console.error(error);
-      let errorMessage = 'Failed to send reset link. Please try again.';
+      let errorMessage = 'Link göndərilərkən xəta baş verdi. Yenidən cəhd edin.';
       if (error.code === 'auth/invalid-email') {
         setInvalidEmailModalVisible(true);
         return;
       } else if (error.code === 'auth/user-not-found') {
-        errorMessage = 'No user found with this email.';
+        errorMessage = 'Bu e-poçt ünvanına aid istifadəçi tapılmadı.';
       }
-      Alert.alert('Error', errorMessage);
+      CustomAlert.show('Uğursuz Əməliyyat', errorMessage);
     } finally {
       setLoading(false);
     }

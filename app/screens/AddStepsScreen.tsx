@@ -8,6 +8,7 @@ import * as IntentLauncher from 'expo-intent-launcher';
 import { BatteryOptEnabled, RequestDisableOptimization } from 'react-native-battery-optimization-check';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getStoredSteps, saveSteps, getLast7DaysSteps, getAllHistory, getMonthSteps, formatDate, DailySteps, registerBackgroundFetchAsync, unregisterBackgroundFetchAsync } from '../utils/stepManager';
+import { CustomAlert } from '@/utils/CustomAlert';
 
 const PRIMARY = "#ccff00";
 const BG_DARK = "#1f230f";
@@ -83,7 +84,7 @@ export default function AddStepsScreen() {
       if (Platform.OS === 'android') {
         const { status } = await Pedometer.requestPermissionsAsync();
         if (status !== 'granted') {
-          Alert.alert(
+          CustomAlert.show(
             "İcazə Lazımdır",
             "Addım sayarın işləməsi üçün fiziki aktivlik icazəsi verməlisiniz.",
             [
@@ -144,7 +145,7 @@ export default function AddStepsScreen() {
               const isEnabled = await BatteryOptEnabled();
               if (isEnabled) {
                   setIsBlocked(true);
-                  Alert.alert(
+                  CustomAlert.show(
                       "Arxa Plan Məhdudiyyəti Açıqdır!",
                       "Addım sayarın arxa planda düzgün işləməsi üçün tətbiqin pil təsarüfü (Battery Optimization) məhdudiyyətini ləğv etməlisiniz.",
                       [

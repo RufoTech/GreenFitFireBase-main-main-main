@@ -3,6 +3,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import React, { useEffect, useState, useCallback } from 'react';
+import { CustomAlert } from '@/utils/CustomAlert';
 import {
     ActivityIndicator,
     Image,
@@ -126,7 +127,7 @@ export default function AthleteProfileScreen() {
 
   const handleDeleteActivity = (item: any, type: 'workout' | 'program') => {
     import('react-native').then(({ Alert }) => {
-        Alert.alert(
+        CustomAlert.show(
           "Silinməni Təsdiqlə",
           "Bu məşqi profilinizdən və icmadan (community) silmək istədiyinizə əminsiniz?",
           [
@@ -161,7 +162,7 @@ export default function AthleteProfileScreen() {
                     }
                  } catch (error) {
                     console.error("Error deleting item:", error);
-                    Alert.alert("Xəta", "Silinmə zamanı xəta baş verdi.");
+                    CustomAlert.show("Xəta", "Silinmə zamanı xəta baş verdi.");
                  } finally {
                     setDeletingId(null);
                  }

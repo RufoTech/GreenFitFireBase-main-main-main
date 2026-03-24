@@ -3,6 +3,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
+import { CustomAlert } from '@/utils/CustomAlert';
 import {
     ActivityIndicator,
     Alert,
@@ -178,7 +179,7 @@ export default function FriendsScreen() {
         .get();
 
       if (!existingReq.empty) {
-        Alert.alert("Info", "Friend request already sent.");
+        CustomAlert.show("Info", "Friend request already sent.");
         return;
       }
 
@@ -189,13 +190,13 @@ export default function FriendsScreen() {
         createdAt: firestore.FieldValue.serverTimestamp()
       });
 
-      Alert.alert("Success", "Friend request sent!");
+      CustomAlert.show("Success", "Friend request sent!");
       setIsAddFriendModalVisible(false);
       setSearchQuery('');
       setSearchResults([]);
     } catch (error) {
       console.error("Error sending request:", error);
-      Alert.alert("Error", "Could not send friend request.");
+      CustomAlert.show("Error", "Could not send friend request.");
     }
   };
 
@@ -205,7 +206,7 @@ export default function FriendsScreen() {
         status: 'accepted',
         updatedAt: firestore.FieldValue.serverTimestamp()
       });
-      Alert.alert("Success", "Friend request accepted!");
+      CustomAlert.show("Success", "Friend request accepted!");
     } catch (error) {
       console.error("Error accepting:", error);
     }
@@ -214,7 +215,7 @@ export default function FriendsScreen() {
   const declineRequest = async (requestId: string) => {
     try {
       await firestore().collection('friend_requests').doc(requestId).delete();
-      Alert.alert("Declined", "Friend request declined.");
+      CustomAlert.show("Declined", "Friend request declined.");
     } catch (error) {
       console.error("Error declining:", error);
     }

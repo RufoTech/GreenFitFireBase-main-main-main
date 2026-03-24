@@ -22,6 +22,7 @@ import {
     ActivityIndicator
 } from 'react-native';
 import { SelectionStore } from '../utils/SelectionStore';
+import { CustomAlert } from '@/utils/CustomAlert';
 
 const { width } = Dimensions.get('window');
 
@@ -169,11 +170,11 @@ export default function CreateCustomWorkoutScreen() {
         if (data.secure_url) {
           setCoverImage(data.secure_url);
         } else {
-          Alert.alert("Upload Error", "Failed to get image URL from Cloudinary.");
+          CustomAlert.show("Upload Error", "Failed to get image URL from Cloudinary.");
         }
       } catch (error) {
         console.error("Cloudinary upload error:", error);
-        Alert.alert("Upload Error", "Could not upload image to Cloudinary.");
+        CustomAlert.show("Upload Error", "Could not upload image to Cloudinary.");
       } finally {
         setIsUploading(false);
       }
@@ -326,7 +327,7 @@ export default function CreateCustomWorkoutScreen() {
 
   const handlePublish = async () => {
     if (!programName.trim()) {
-      Alert.alert("Error", "Please enter a program name.");
+      CustomAlert.show("Error", "Please enter a program name.");
       return;
     }
     
@@ -337,14 +338,14 @@ export default function CreateCustomWorkoutScreen() {
     }));
 
     if (!hasExercises) {
-      Alert.alert("Error", "Please add at least one exercise.");
+      CustomAlert.show("Error", "Please add at least one exercise.");
       return;
     }
 
     try {
       const user = auth().currentUser;
       if (!user) {
-        Alert.alert("Error", "You must be logged in to create a workout.");
+        CustomAlert.show("Error", "You must be logged in to create a workout.");
         return;
       }
       const userId = user.uid;
@@ -409,7 +410,7 @@ export default function CreateCustomWorkoutScreen() {
 
     } catch (error) {
       console.error("Error saving program:", error);
-      Alert.alert("Error", "Failed to save program.");
+      CustomAlert.show("Error", "Failed to save program.");
     }
   };
 

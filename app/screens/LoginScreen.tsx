@@ -6,6 +6,7 @@ import firestore from '@react-native-firebase/firestore';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
+import { CustomAlert } from '@/utils/CustomAlert';
 import {
   Alert,
   Modal,
@@ -77,7 +78,7 @@ export default function LoginScreen() {
       router.replace('/screens/GoalSelectionScreen');
     } catch (error) {
       console.error(error);
-      Alert.alert('Google Sign-In Error', String(error));
+      CustomAlert.show('Giriş Xətası', 'Google ilə daxil olarkən xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.');
     }
   }
 
@@ -95,20 +96,21 @@ export default function LoginScreen() {
       if (user.emailVerified) {
         router.replace('/screens/GoalSelectionScreen');
       } else {
-        Alert.alert(
-          'Doğrulama Gerekli',
-          'Lütfen giriş yapmadan önce e-posta adresinizi doğrulayın.',
+        CustomAlert.show(
+          'Təsdiqləmə Tələb Olunur',
+          'Hesabınıza daxil olmaq üçün ilk öncə e-poçt ünvanınızı təsdiqləməlisiniz. E-poçtunuza göndərilən linkə daxil olun.',
           [
             { 
-              text: 'Tekrar Gönder', 
+              text: 'Yenidən Göndər', 
               onPress: async () => {
                 await user.sendEmailVerification();
                 await auth().signOut();
-                Alert.alert('Bilgi', 'Doğrulama e-postası tekrar gönderildi.');
+                CustomAlert.show('Uğurlu', 'Təsdiqləmə mexrubu e-poçtunuza yenidən göndərildi.');
               }
             },
             { 
               text: 'Tamam',
+              style: 'cancel',
               onPress: async () => await auth().signOut()
             }
           ]

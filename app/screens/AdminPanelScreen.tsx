@@ -14,6 +14,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import firestore from '@react-native-firebase/firestore';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
+import { CustomAlert } from '@/utils/CustomAlert';
 
 export default function AdminPanelScreen() {
   const router = useRouter();
@@ -23,7 +24,7 @@ export default function AdminPanelScreen() {
 
   const handleSave = async () => {
     if (!movementName.trim() || !category.trim()) {
-      Alert.alert('Error', 'Please fill in both fields.');
+      CustomAlert.show('Error', 'Please fill in both fields.');
       return;
     }
 
@@ -38,13 +39,13 @@ export default function AdminPanelScreen() {
           createdAt: firestore.FieldValue.serverTimestamp(),
         });
 
-      Alert.alert('Success', 'Movement saved successfully!');
+      CustomAlert.show('Success', 'Movement saved successfully!');
       setMovementName('');
       setCategory('');
       router.back();
     } catch (error) {
       console.error('Error adding document: ', error);
-      Alert.alert('Error', 'Failed to save movement. Please try again.');
+      CustomAlert.show('Error', 'Failed to save movement. Please try again.');
     } finally {
       setLoading(false);
     }

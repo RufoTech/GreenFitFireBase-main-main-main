@@ -20,6 +20,7 @@ import {
     View
 } from 'react-native';
 import { WebView } from 'react-native-webview';
+import { CustomAlert } from '@/utils/CustomAlert';
 
 const { width } = Dimensions.get('window');
 
@@ -358,7 +359,7 @@ export default function LiveWorkoutScreen() {
 
     } catch (error) {
       console.error("Error fetching live workout data:", error);
-      Alert.alert("Error", "Failed to load workout data.");
+      CustomAlert.show("Error", "Failed to load workout data.");
     } finally {
       setLoading(false);
     }
@@ -436,7 +437,7 @@ export default function LiveWorkoutScreen() {
              // If it was the last exercise but had a rest (rare), finish after rest?
              // Usually rest is between sets.
              // We'll just finish workout if no next item.
-             Alert.alert("Workout Complete", "Great job! You've finished the workout.", [
+             CustomAlert.show("Workout Complete", "Great job! You've finished the workout.", [
                 { text: "Finish", onPress: () => router.replace({
                     pathname: '/screens/WorkoutCompleteScreen',
                     params: {

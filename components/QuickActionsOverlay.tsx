@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Animated, Easing,
 import { MaterialIcons, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { BatteryOptEnabled, RequestDisableOptimization } from 'react-native-battery-optimization-check';
+import { CustomAlert } from '@/utils/CustomAlert';
 
 const { height } = Dimensions.get('window');
 
@@ -78,7 +79,7 @@ export default function QuickActionsOverlay({ visible, onClose }: QuickActionsOv
           try {
               const isEnabled = await BatteryOptEnabled();
               if (isEnabled) {
-                  Alert.alert(
+                  CustomAlert.show(
                       "Arxa Plan Məhdudiyyəti Açıqdır!",
                       "Addım sayarın arxa planda düzgün işləməsi üçün tətbiqin pil təsarüfü (Battery Optimization) məhdudiyyətini ləğv etməlisiniz.",
                       [

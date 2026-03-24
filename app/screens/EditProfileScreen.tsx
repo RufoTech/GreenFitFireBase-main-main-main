@@ -19,6 +19,7 @@ import {
   View
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { CustomAlert } from '@/utils/CustomAlert';
 
 const BG_DARK = "#0d0f06";
 const PRIMARY = "#ccff00";
@@ -90,11 +91,11 @@ export default function EditProfileScreen() {
         fullname: fullName,
       }, { merge: true });
 
-      Alert.alert("Success", "Profile updated successfully!");
+      CustomAlert.show("Success", "Profile updated successfully!");
       router.back();
     } catch (error) {
       console.error("Error saving profile:", error);
-      Alert.alert("Error", "Failed to update profile. Please try again.");
+      CustomAlert.show("Error", "Failed to update profile. Please try again.");
     } finally {
       setSaving(false);
     }

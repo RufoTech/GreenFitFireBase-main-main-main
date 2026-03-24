@@ -5,6 +5,7 @@ import firestore from '@react-native-firebase/firestore';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Image, Modal, Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { CustomAlert } from '@/utils/CustomAlert';
 
 const PRIMARY = "#ccff00";
 const BG_DARK = "#0d0f06";
@@ -244,7 +245,7 @@ export default function AddMealScreen() {
   };
 
   const handleDeleteCustomFood = (id: string) => {
-    Alert.alert(
+    CustomAlert.show(
       "Delete Custom Food",
       "Are you sure you want to delete this custom food?",
       [
@@ -259,7 +260,7 @@ export default function AddMealScreen() {
               setFoods(prev => prev.filter(f => f.id !== id));
             } catch (error) {
               console.error("Error deleting custom food:", error);
-              Alert.alert("Error", "Could not delete food.");
+              CustomAlert.show("Error", "Could not delete food.");
             }
           }
         }
@@ -279,12 +280,12 @@ export default function AddMealScreen() {
   const handleSaveMeals = async () => {
     try {
       await AsyncStorage.setItem(`meals_${selectedDateStr}`, JSON.stringify(dailyMeals));
-      Alert.alert("Success", "Meals saved successfully!");
+      CustomAlert.show("Success", "Meals saved successfully!");
       setIsOldUiVisible(false);
       setAddedItems([]); // Modal sepetini sıfırla
     } catch (error) {
       console.error("Error saving meals:", error);
-      Alert.alert("Error", "Could not save meals.");
+      CustomAlert.show("Error", "Could not save meals.");
     }
   };
 

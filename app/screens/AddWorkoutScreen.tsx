@@ -19,6 +19,7 @@ import {
   View
 } from 'react-native';
 import { SelectionStore } from '../utils/SelectionStore';
+import { CustomAlert } from '@/utils/CustomAlert';
 
 // Define Workout interface
 interface Workout {
@@ -174,7 +175,7 @@ export default function AddWorkoutScreen() {
   const handleDeleteCustomWorkout = async (workoutId: string, event: any) => {
     event.stopPropagation(); // Prevent navigation to details
     
-    Alert.alert(
+    CustomAlert.show(
       "Delete Workout",
       "Are you sure you want to delete this custom workout?",
       [
@@ -194,7 +195,7 @@ export default function AddWorkoutScreen() {
               setWorkouts(prev => prev.filter(w => w.id !== workoutId));
             } catch (error) {
               console.error("Error deleting workout:", error);
-              Alert.alert("Error", "Failed to delete workout.");
+              CustomAlert.show("Error", "Failed to delete workout.");
             }
           }
         }

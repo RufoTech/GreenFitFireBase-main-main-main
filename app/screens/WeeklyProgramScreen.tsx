@@ -4,6 +4,7 @@ import firestore from '@react-native-firebase/firestore';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
+import { CustomAlert } from '@/utils/CustomAlert';
 import {
     ActivityIndicator,
     Alert,
@@ -124,7 +125,7 @@ export default function WeeklyProgramScreen() {
         setProgramData(data);
     } catch (error) {
         console.error("Error fetching program weeks via Go API:", error);
-        Alert.alert("Error", "Failed to load program schedule. Please check your backend.");
+        CustomAlert.show("Error", "Failed to load program schedule. Please check your backend.");
     } finally {
         setLoading(false);
     }

@@ -24,6 +24,7 @@ import { BatteryOptEnabled, RequestDisableOptimization } from 'react-native-batt
 import { getStoredSteps } from '../utils/stepManager';
 import { useAchievements } from '../utils/useAchievements';
 import { getWaterLogs } from '../utils/waterManager';
+import { CustomAlert } from '@/utils/CustomAlert';
 
 const { width } = Dimensions.get('window');
 
@@ -158,7 +159,7 @@ export default function DashboardScreen() {
       setDeleteModalVisible(false);
     } catch (error) {
       console.error("Error removing program:", error);
-      Alert.alert("Error", "Could not remove the program. Please try again.");
+      CustomAlert.show("Error", "Could not remove the program. Please try again.");
     }
   };
 
@@ -167,7 +168,7 @@ export default function DashboardScreen() {
         try {
             const isEnabled = await BatteryOptEnabled();
             if (isEnabled) {
-                Alert.alert(
+                CustomAlert.show(
                     "Arxa Plan Məhdudiyyəti Açıqdır!",
                     "Addım sayarın arxa planda düzgün işləməsi üçün tətbiqin pil təsarüfü (Battery Optimization) məhdudiyyətini ləğv etməlisiniz.",
                     [

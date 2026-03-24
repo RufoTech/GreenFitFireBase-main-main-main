@@ -20,6 +20,7 @@ import {
 import { SelectionStore } from '../utils/SelectionStore';
 
 import auth from '@react-native-firebase/auth';
+import { CustomAlert } from '@/utils/CustomAlert';
 
 export default function CreateProgramScreen() {
   const router = useRouter();
@@ -129,7 +130,7 @@ export default function CreateProgramScreen() {
         }
       } catch (error) {
         console.error("Error fetching plan:", error);
-        Alert.alert("Error", "Failed to load plan for this focus.");
+        CustomAlert.show("Error", "Failed to load plan for this focus.");
       } finally {
         setLoading(false);
       }
@@ -202,7 +203,7 @@ export default function CreateProgramScreen() {
 
   const handleSave = async () => {
     if (!programName.trim()) {
-      Alert.alert('Error', 'Please enter a program name');
+      CustomAlert.show('Error', 'Please enter a program name');
       return;
     }
 
@@ -213,7 +214,7 @@ export default function CreateProgramScreen() {
     });
 
     if (!hasWorkouts) {
-      Alert.alert('Error', 'Please add at least one workout to your program');
+      CustomAlert.show('Error', 'Please add at least one workout to your program');
       return;
     }
 
@@ -221,7 +222,7 @@ export default function CreateProgramScreen() {
     try {
       const user = auth().currentUser;
       if (!user) {
-        Alert.alert('Error', 'You must be logged in to save a program');
+        CustomAlert.show('Error', 'You must be logged in to save a program');
         setLoading(false);
         return;
       }
@@ -279,7 +280,7 @@ export default function CreateProgramScreen() {
       // We no longer navigate immediately, wait for user action in modal
     } catch (error) {
       console.error('Error saving program:', error);
-      Alert.alert('Error', 'Failed to save program. Please try again.');
+      CustomAlert.show('Error', 'Failed to save program. Please try again.');
     } finally {
       setLoading(false);
     }
