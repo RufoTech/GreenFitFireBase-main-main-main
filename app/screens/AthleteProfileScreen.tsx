@@ -4,6 +4,7 @@ import firestore from '@react-native-firebase/firestore';
 import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import React, { useEffect, useState, useCallback } from 'react';
 import { CustomAlert } from '@/utils/CustomAlert';
+import * as Linking from 'expo-linking';
 import {
     ActivityIndicator,
     Image,
@@ -11,6 +12,7 @@ import {
     Platform,
     SafeAreaView,
     ScrollView,
+    Share,
     StatusBar,
     StyleSheet,
     Text,
@@ -46,6 +48,15 @@ export default function AthleteProfileScreen() {
   const [completedAchievements, setCompletedAchievements] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [friendshipStatus, setFriendshipStatus] = useState<'none' | 'pending' | 'accepted' | 'loading'>('loading');
+
+  // Prevent unauthenticated users from viewing the profile screen
+  useEffect(() => {
+    if (!loading && !currentUser) {
+      CustomAlert.show('Daxil Olun', 'Bu profili görmək üçün hesaba daxil olmalısınız.');
+      router.replace('/login');
+    }
+  }, [currentUser, loading]);
 
   useFocusEffect(
     useCallback(() => {
@@ -112,6 +123,32 @@ export default function AthleteProfileScreen() {
         }));
         setCompletedAchievements(achievementsList);
 
+        // 6. Check Friendship Status if NOT own profile
+        if (!isOwnProfile && currentUser) {
+          const checkStatus = async () => {
+             const req1 = await firestore().collection('friend_requests')
+               .where('senderId', '==', currentUser.uid)
+               .where('receiverId', '==', profileUserId)
+               .get();
+             
+             const req2 = await firestore().collection('friend_requests')
+               .where('senderId', '==', profileUserId)
+               .where('receiverId', '==', currentUser.uid)
+               .get();
+
+             if (!req1.empty) {
+                setFriendshipStatus(req1.docs[0].data().status);
+             } else if (!req2.empty) {
+                const req2Status = req2.docs[0].data().status;
+                // If it's pending and receiver is us, maybe show action? Keeping it 'pending' logic for now.
+                setFriendshipStatus(req2Status);
+             } else {
+                setFriendshipStatus('none');
+             }
+          };
+          await checkStatus();
+        }
+
       } catch (error) {
         console.error("Error loading athlete profile:", error);
       } finally {
@@ -173,6 +210,37 @@ export default function AthleteProfileScreen() {
     });
   };
 
+  const handleShareProfile = async () => {
+    try {
+      const url = Linking.createURL('/screens/AthleteProfileScreen', { queryParams: { userId: profileUserId } });
+      await Share.share({
+        message: `Mənim GreenFit profilimə baxın! ${url}`,
+      });
+    } catch (error) {
+      console.error(error);
+      CustomAlert.show('Xəta', 'Paylaşılarkən xəta baş verdi.');
+    }
+  };
+
+  const handleAddFriend = async () => {
+    if (!currentUser) return;
+    try {
+      setFriendshipStatus('loading');
+      await firestore().collection('friend_requests').add({
+        senderId: currentUser.uid,
+        receiverId: profileUserId,
+        status: 'pending',
+        createdAt: firestore.FieldValue.serverTimestamp()
+      });
+      setFriendshipStatus('pending');
+      CustomAlert.show("Success", "Friend request sent!");
+    } catch (error) {
+      console.error("Error sending request:", error);
+      CustomAlert.show("Error", "Could not send friend request.");
+      setFriendshipStatus('none');
+    }
+  };
+
   if (loading) {
     return (
       <SafeAreaView style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
@@ -225,13 +293,29 @@ export default function AthleteProfileScreen() {
                 >
                   <Text style={styles.actionBtnText}>EDIT PROFILE</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.actionBtn}>
+                <TouchableOpacity style={styles.actionBtn} onPress={handleShareProfile}>
                   <Text style={styles.actionBtnText}>SHARE PROFILE</Text>
                 </TouchableOpacity>
               </>
-            ) : (
-              <View style={{ height: 10 }} />
-            )}
+            ) : currentUser ? (
+              <View style={{ flexDirection: 'row', gap: 10 }}>
+                {friendshipStatus === 'none' && (
+                  <TouchableOpacity style={[styles.actionBtn, { backgroundColor: PRIMARY, borderColor: PRIMARY }]} onPress={handleAddFriend}>
+                    <Text style={[styles.actionBtnText, { color: BG_DARK, fontSize: 13 }]}>ADD FRIEND +</Text>
+                  </TouchableOpacity>
+                )}
+                {friendshipStatus === 'pending' && (
+                  <TouchableOpacity style={styles.actionBtn} disabled>
+                    <Text style={[styles.actionBtnText, { color: TEXT_MUTED }]}>REQUEST SENT</Text>
+                  </TouchableOpacity>
+                )}
+                {friendshipStatus === 'accepted' && (
+                  <TouchableOpacity style={[styles.actionBtn, { backgroundColor: 'transparent', borderColor: PRIMARY }]} disabled>
+                    <Text style={[styles.actionBtnText, { color: PRIMARY }]}>FRIENDS</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            ) : null}
           </View>
         </View>
 

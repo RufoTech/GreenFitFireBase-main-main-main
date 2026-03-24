@@ -2,8 +2,9 @@ import { MaterialIcons } from '@expo/vector-icons';
 import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import * as Clipboard from 'expo-clipboard';
+import firestore from '@react-native-firebase/firestore';
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { CustomAlert } from '@/utils/CustomAlert';
 import {
   Alert,
@@ -15,7 +16,9 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  Modal,
+  ActivityIndicator
 } from 'react-native';
 
 // MenuItem Component
@@ -52,12 +55,24 @@ export default function ProfileScreen() {
   const router = useRouter();
   const user = auth().currentUser;
 
-  React.useEffect(() => {
+  const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [deleteCountdown, setDeleteCountdown] = useState(10);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
     // Configure GoogleSignin to prevent 'apiClient is null' error on sign out
     GoogleSignin.configure({
       webClientId: '802032521156-plrtru1qe837u5cr60nl2p5jtsik201b.apps.googleusercontent.com',
     });
   }, []);
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    if (isDeleteModalVisible && deleteCountdown > 0) {
+      timer = setTimeout(() => setDeleteCountdown(deleteCountdown - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [isDeleteModalVisible, deleteCountdown]);
 
   const handleLogout = async () => {
     try {
@@ -74,6 +89,28 @@ export default function ProfileScreen() {
     if (user?.uid) {
       await Clipboard.setStringAsync(user.uid);
       CustomAlert.show("Copied!", "User ID copied to clipboard.");
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!user) return;
+    setIsDeleting(true);
+    try {
+      await firestore().collection('user_about').doc(user.uid).delete();
+      await user.delete();
+      router.replace('/login');
+    } catch (error: any) {
+      console.error(error);
+      if (error.code === 'auth/requires-recent-login') {
+           CustomAlert.show('Xəta', 'Hesabı silmək üçün təhlükəsizlik məqsədilə hesabdan çıxıb yenidən daxil olmalısınız.');
+           await auth().signOut();
+           router.replace('/login');
+      } else {
+           CustomAlert.show('Xəta', 'Hesab silinərkən xəta baş verdi.');
+      }
+    } finally {
+      setIsDeleting(false);
+      setDeleteModalVisible(false);
     }
   };
 
@@ -150,12 +187,56 @@ export default function ProfileScreen() {
             isLogout 
             onPress={handleLogout} 
           />
+          <MenuItem 
+            icon="person-remove" 
+            title="Delete Account" 
+            isLogout 
+            onPress={() => { setDeleteCountdown(10); setDeleteModalVisible(true); }} 
+          />
         </View>
 
         {/* Bottom Padding for TabBar */}
         <View style={{ height: 100 }} />
 
       </ScrollView>
+
+      {/* Delete Account Modal */}
+      <Modal visible={isDeleteModalVisible} transparent={true} animationType="fade">
+        <View style={styles.modalOverlay}>
+           <View style={styles.modalContent}>
+              <MaterialIcons name="warning" size={48} color="#ef4444" />
+              <Text style={styles.modalTitle}>Hesabı Sil</Text>
+              <Text style={styles.modalText}>
+                Hesabınızı sildikdən sonra bütün məlumatlarınız həmişəlik silinəcək. Bu əməliyyatı geri qaytarmaq mümkün deyil.
+              </Text>
+              
+              <View style={styles.modalActions}>
+                 <TouchableOpacity 
+                    style={styles.modalCancelBtn} 
+                    onPress={() => { setDeleteModalVisible(false); setDeleteCountdown(10); }}
+                    disabled={isDeleting}
+                 >
+                   <Text style={styles.modalCancelText}>Ləğv et</Text>
+                 </TouchableOpacity>
+
+                 <TouchableOpacity 
+                   style={[styles.modalDeleteBtn, deleteCountdown > 0 ? styles.modalDeleteBtnDisabled : null]} 
+                   disabled={deleteCountdown > 0 || isDeleting}
+                   onPress={handleDeleteAccount}
+                 >
+                   {isDeleting ? (
+                     <ActivityIndicator size="small" color="#ffffff" />
+                   ) : (
+                     <Text style={styles.modalDeleteText}>
+                       {deleteCountdown > 0 ? `Sil (${deleteCountdown}s)` : 'Hesabı Sil'}
+                     </Text>
+                   )}
+                 </TouchableOpacity>
+              </View>
+           </View>
+        </View>
+      </Modal>
+
     </SafeAreaView>
   );
 }
@@ -291,5 +372,66 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     marginVertical: 8,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  modalContent: {
+    backgroundColor: '#1f230f',
+    borderRadius: 20,
+    padding: 24,
+    width: '100%',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(239, 68, 68, 0.3)',
+  },
+  modalTitle: {
+    color: '#ffffff',
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginTop: 16,
+    marginBottom: 12,
+  },
+  modalText: {
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontSize: 14,
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: 24,
+  },
+  modalActions: {
+    flexDirection: 'row',
+    gap: 12,
+    width: '100%',
+  },
+  modalCancelBtn: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    alignItems: 'center',
+  },
+  modalCancelText: {
+    color: '#ffffff',
+    fontWeight: 'bold',
+  },
+  modalDeleteBtn: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 12,
+    backgroundColor: '#ef4444',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalDeleteBtnDisabled: {
+    backgroundColor: 'rgba(239, 68, 68, 0.3)',
+  },
+  modalDeleteText: {
+    color: '#ffffff',
+    fontWeight: 'bold',
   },
 });
