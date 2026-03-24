@@ -155,7 +155,7 @@ export default function RootLayout() {
         <Stack.Screen name="screens/LocationSelectionScreen" />
         <Stack.Screen name="screens/FrequencySelectionScreen" />
         <Stack.Screen name="screens/LevelSelectionScreen" />
-        <Stack.Screen name="screens/PersonalDataScreen" />
+
         <Stack.Screen name="screens/CreateProgramScreen" />
         <Stack.Screen name="screens/WorkoutDetailsScreen" />
         <Stack.Screen name="screens/ExerciseDetailScreen" />

@@ -127,11 +127,6 @@ export default function ProfileScreen() {
             onPress={() => router.push('/screens/AthleteProfileScreen')}
           />
           <MenuItem 
-            icon="person" 
-            title="Personal Information" 
-            onPress={() => router.push('/screens/PersonalDataScreen')} 
-          />
-          <MenuItem 
             icon="emoji-events" 
             title="Achievements" 
             onPress={() => router.push('/screens/AchievementsScreen')}

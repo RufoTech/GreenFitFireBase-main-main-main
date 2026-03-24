@@ -1,7 +1,7 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Linking, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const BG_DARK = "#11140b";
 const SURFACE_CONTAINER_LOW = "#1a1d13";
@@ -155,7 +155,11 @@ export default function FAQScreen() {
             <Text style={styles.ctaTitle}>Still need help?</Text>
             <Text style={styles.ctaSubtitle}>Our fitness experts are available 24/7 for technical support.</Text>
           </View>
-          <TouchableOpacity style={styles.ctaButton}>
+          <TouchableOpacity 
+            style={styles.ctaButton}
+            onPress={() => Linking.openURL('mailto:rainnovationsmmc@gmail.com')}
+            activeOpacity={0.8}
+          >
             <MaterialIcons name="chat" size={20} color={ON_PRIMARY} />
             <Text style={styles.ctaButtonText}>Contact Us</Text>
           </TouchableOpacity>
